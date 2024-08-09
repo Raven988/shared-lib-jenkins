@@ -1,5 +1,8 @@
 package org.foo
 
+@Grab(group='com.moandjiezana.toml', module='toml4j', version='0.7.2')
+import com.moandjiezana.toml.Toml
+
 class MyPipeline {
 
     MyPipeline(pipeline) {
@@ -18,6 +21,21 @@ class MyPipeline {
                     MyUtils.pipeline.echo(MyUtils.getGitRepoName())
                     MyUtils.sh('echo Hello from shell')
                     MyUtils.mkdir('exampleDir')
+
+                    def tomlContent = '''
+                        title = "TOML Example"
+
+                        [owner]
+                        name = "Tom Preston-Werner"
+                        dob = 1979-05-27T07:32:00Z
+                        '''
+                        
+                    def toml = new Toml().read(tomlContent)
+                    def title = toml.getString("title")
+                    def ownerName = toml.getString("owner.name")
+                    
+                    MyUtils.pipeline.echo("Title: ${title}")
+                    MyUtils.pipeline.echo("Owner: ${ownerName}")
                 }
             }
         }
